@@ -72,7 +72,7 @@ func buildServer() *mcp.Server {
 
 	tool := &mcp.Tool{
 		Name:        "handoff_to_chatgpt",
-		Description: "Hand off a research or debugging prompt to ChatGPT, powered by the very powerful GPT-5 thinking model with advanced tools like browsing. Write detailed, specific prompts that include all necessary context. After calling this tool, you should stop and wait for the user to relay ChatGPT's response back to you.\n\nExample uses:\n1. Research: \"Research the latest developments in WebAssembly performance optimizations, focusing on 2024-2025 improvements and real-world benchmarks\"\n2. Debugging: \"Debug this Go memory leak issue: [include relevant code snippets, error messages, and context about when the issue occurs]\"",
+		Description: "Hand off a research or debugging prompt to ChatGPT, powered by the very powerful GPT-5 thinking model with advanced tools like browsing. Write detailed, specific prompts that include all necessary context. After sending your prompt, you should stop and wait for the user to relay ChatGPT's response back to you.\n\nExample uses:\n1. Research: \"Research the latest developments in WebAssembly performance optimizations, focusing on 2024-2025 improvements and real-world benchmarks\"\n2. Debugging: \"Debug this Go memory leak issue: [include relevant code snippets, error messages, and context about when the issue occurs]\"",
 	}
 
 	mcp.AddTool(srv, tool, handleHandoff)
@@ -175,7 +175,7 @@ func openURL(urlStr string) error {
 
 func startHTTPServer(srv *mcp.Server) {
 	handler := mcp.NewSSEHandler(func(request *http.Request) *mcp.Server { return srv })
-	
+
 	mux := http.NewServeMux()
 	mux.Handle("/mcp/", handler)
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

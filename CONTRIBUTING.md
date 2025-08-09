@@ -31,7 +31,7 @@ Create a test file with MCP protocol messages:
 ```bash
 # Create test file
 cat > test.jsonl << 'EOF'
-{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","clientInfo":{"name":"test","version":"1.0"}}}
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","clientInfo":{"name":"test","version":"1.0"}}}
 {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
 {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"handoff_to_chatgpt","arguments":{"prompt":"Test research prompt"}}}
 EOF

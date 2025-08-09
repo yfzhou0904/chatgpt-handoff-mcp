@@ -4,14 +4,22 @@ A minimal MCP (Model Context Protocol) server that enables seamless handoff of p
 
 ## Features
 
-- **Single MCP tool**: `request_chatgpt_research` with flexible prompt input
+- **Single MCP tool**: `handoff_to_chatgpt` with flexible prompt input
 - **Dual transports**: stdio (default) and HTTP server modes
-- **2025-06-18 MCP spec**: Latest protocol version with structured outputs
+- **Latest MCP protocol**: Auto-negotiates to highest supported version (currently 2025-06-18)
 - **Cross-platform clipboard**: Works on macOS, Windows, and Linux
-- **Zero dependencies**: Single Go binary with no external requirements
+- **Browser integration**: Auto-send to ChatGPT using deeplinks (for shorter prompts)
 - **Minimal and fast**: No file I/O, no notifications, just clipboard copying
 
 ## Installation
+
+### Recommended: Go Install
+
+```bash
+go install .
+```
+
+This installs the `chatgpt-handoff` binary to your `$GOPATH/bin` (usually `~/go/bin`), which should be in your `$PATH`.
 
 ### From Source
 
@@ -48,11 +56,13 @@ Add to your Claude Code MCP configuration (typically `~/.config/claude-code/sett
 {
   "mcpServers": {
     "chatgpt-handoff": {
-      "command": "/usr/local/bin/chatgpt-handoff"
+      "command": "chatgpt-handoff"
     }
   }
 }
 ```
+
+**Note**: If you installed via `go install .`, the binary should be available as `chatgpt-handoff` in your PATH.
 
 ### Command Line Options
 
@@ -66,7 +76,7 @@ Add to your Claude Code MCP configuration (typically `~/.config/claude-code/sett
 {
   "mcpServers": {
     "chatgpt-handoff": {
-      "command": "/usr/local/bin/chatgpt-handoff"
+      "command": "chatgpt-handoff"
     }
   }
 }
@@ -99,7 +109,7 @@ Once configured, ask Claude Code to research topics:
 - "Research competitive analysis of AI coding assistants"
 - "Investigate the latest developments in renewable energy storage"
 
-Claude will automatically call the `request_chatgpt_research` tool, which simply copies your prompt to the clipboard.
+Claude will automatically call the `handoff_to_chatgpt` tool, which copies your prompt to the clipboard and may open ChatGPT in your browser for short prompts.
 
 ## Tool Schema
 
@@ -111,23 +121,17 @@ The MCP tool accepts a simple prompt parameter:
 }
 ```
 
-### Structured Output
+### Response
 
-The tool returns structured data:
-
-```json
-{
-  "clipboardStatus": "copied|failed",
-  "timestamp": "2025-08-09T01:40:00Z"
-}
-```
+The tool returns a simple text message indicating success or failure.
 
 ## How It Works
 
 1. You provide a prompt to Claude Code
-2. Claude Code calls the `request_chatgpt_research` tool
-3. Your prompt is copied directly to the clipboard
-4. You paste it into ChatGPT manually
+2. Claude Code calls the `handoff_to_chatgpt` tool
+3. Your prompt is copied to the clipboard
+4. If the prompt is short enough, ChatGPT opens in your browser
+5. You paste the prompt into ChatGPT (if it didn't auto-open)
 
 That's it! Simple and reliable.
 
@@ -139,7 +143,7 @@ You can test the MCP server directly with JSON-RPC:
 ```bash
 echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","clientInfo":{"name":"test","version":"1.0"}}}' | ./chatgpt-handoff
 echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | ./chatgpt-handoff
-echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"request_chatgpt_research","arguments":{"prompt":"Research the latest AI trends in 2025, focusing on practical applications and market impact."}}}' | ./chatgpt-handoff
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"handoff_to_chatgpt","arguments":{"prompt":"Research the latest AI trends in 2025, focusing on practical applications and market impact."}}}' | ./chatgpt-handoff
 ```
 
 ## Troubleshooting

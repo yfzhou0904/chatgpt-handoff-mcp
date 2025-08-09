@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "chatgpt-handoff": {
-      "command": "/usr/local/bin/chatgpt-handoff"
+      "command": "chatgpt-handoff"
     }
   }
 }
